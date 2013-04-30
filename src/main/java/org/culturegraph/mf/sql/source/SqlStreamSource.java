@@ -23,32 +23,50 @@ import org.culturegraph.mf.sql.util.PreparedQuery;
 
 /**
  * Executes a prepared statement or stored procedure for each
- * object received. The string value of the object is passed 
+ * object received. The string value of the object is passed
  * into the SQL statement as a parameter named ":obj". The
  * result sets created by executing the statement are returned
- * as records. For each row in the result set one record is 
+ * as records. For each row in the result set one record is
  * emitted.
  *
  * @author Christoph Böhme
  */
 public final class SqlStreamSource<T> extends
 		DefaultObjectPipe<T, StreamReceiver> {
-	
+
 	public static final String PARAMETER = "obj";
-	
-	private final PreparedQuery statement;
-	
-	public SqlStreamSource(final Connection connection, final String sql) {
-		statement = new PreparedQuery(connection, sql, true);
+
+	private final String datasource;
+	private final Connection connection;
+
+	private PreparedQuery statement;
+
+	public SqlStreamSource(final String datasource) {
+		this.datasource = datasource;
+		this.connection = null;
+
 	}
-	
+
+	public SqlStreamSource(final Connection connection) {
+		this.datasource = null;
+		this.connection = connection;
+	}
+
+	public void setStatement(final String sql) {
+		if (datasource != null) {
+			statement = new PreparedQuery(datasource, sql, true);
+		} else if (connection != null) {
+			statement = new PreparedQuery(connection, sql, true);
+		}
+	}
+
 	@Override
-	public void process(T obj) {
+	public void process(final T obj) {
 		statement.clearParameters();
 		statement.setParameter("obj", obj.toString());
 		statement.execute(getReceiver());
 	}
-	
+
 	@Override
 	protected void onCloseStream() {
 		statement.close();

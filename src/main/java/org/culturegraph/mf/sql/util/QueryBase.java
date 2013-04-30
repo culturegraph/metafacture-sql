@@ -22,13 +22,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.EnumSet;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import org.culturegraph.mf.exceptions.MetafactureException;
 import org.culturegraph.mf.framework.StreamReceiver;
 import org.culturegraph.mf.sql.util.JdbcUtil.Bug;
 
 /**
  * Base class for prepared statements and individual statements.
- * 
+ *
  * @author Christoph Böhme
  *
  */
@@ -49,14 +53,14 @@ public abstract class QueryBase {
 	protected final boolean isEmitGeneratedKeys() {
 		return emitGeneratedKeys;
 	}
-	
+
 	protected void processResults(final Statement statement, final StreamReceiver receiver) {
 		try {
 			ResultSet resultSet;
 			if (hasDriverBug(Bug.GET_RESULT_SET_THROWS_ILLEGAL_EXCEPTION)) {
 				try {
 					resultSet = statement.getResultSet();
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					if (statement.getUpdateCount() == -1) {
 						throw e;
 					}
@@ -71,12 +75,22 @@ public abstract class QueryBase {
 			if (isEmitGeneratedKeys()) {
 				emitRecords(statement.getGeneratedKeys(), receiver);
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new MetafactureException(e);
 		}
-		
+
 	}
-	
+
+	protected static Connection getConnection(final String datasourceName) {
+		try {
+			final InitialContext ctx = new InitialContext();
+			final DataSource datasource = (DataSource) ctx.lookup(datasourceName);
+			return datasource.getConnection();
+		} catch (final NamingException | SQLException e) {
+			throw new MetafactureException(e);
+		}
+	}
+
 	private static void emitRecords(final ResultSet resultSet, final StreamReceiver receiver) {
 		try {
 			final ResultSetMetaData resultSetMeta = resultSet.getMetaData();
@@ -87,11 +101,11 @@ public abstract class QueryBase {
 				}
 				receiver.endRecord();
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new MetafactureException(e);
 		} finally {
-			try { resultSet.close(); } 
-			catch (SQLException e) { /* Ignore exception */ }
+			try { resultSet.close(); }
+			catch (final SQLException e) { /* Ignore exception */ }
 		}
 	}
 

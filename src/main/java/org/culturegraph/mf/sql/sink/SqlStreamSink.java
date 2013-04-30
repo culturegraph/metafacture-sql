@@ -23,45 +23,62 @@ import org.culturegraph.mf.sql.util.PreparedQuery;
 
 /**
  * Executes a prepared query for each record received. The
- * prepared query supports named parameters (written as 
+ * prepared query supports named parameters (written as
  * :PARAMETER). If a literal name matches a parameter name
  * its value is used for the parameter. Literals in entities
  * are not prefixed with entity name.
- *  
- * {@code SqlStreamSinkTest} does not evaluate the result set 
- * which may be returned by executing the query. This 
- * makes this module suitable for performing operations such 
+ *
+ * {@code SqlStreamSinkTest} does not evaluate the result set
+ * which may be returned by executing the query. This
+ * makes this module suitable for performing operations such
  * as INSERT, UPDATE or DELETE.
- * 
+ *
  * Use {@code SqlStreamPipe} if access to the results of the
  * SQL query is required.
- * 
+ *
  * @see SqlStreamPipe
- * 
+ *
  * @author Christoph Böhme
- * 
+ *
  */
 public final class SqlStreamSink extends DefaultStreamReceiver {
 
-	public static final String ID_PARAMETER = "_ID"; 
-	
-	private final PreparedQuery query;
+	public static final String ID_PARAMETER = "_ID";
 
-	public SqlStreamSink(final Connection connection, final String sql) {
-		this.query = new PreparedQuery(connection, sql, false);
+	private final String datasource;
+	private final Connection connection;
+
+	private PreparedQuery query;
+
+	public SqlStreamSink(final String datasource) {
+		this.datasource = datasource;
+		this.connection = null;
 	}
-	
+
+	public SqlStreamSink(final Connection connection) {
+		this.datasource = null;
+		this.connection = connection;
+	}
+
+	public void setQuery(final String sql) {
+		if (datasource != null) {
+			this.query = new PreparedQuery(datasource, sql, false);
+		} else if (connection != null) {
+			this.query = new PreparedQuery(connection, sql, false);
+		}
+	}
+
 	@Override
 	public void startRecord(final String id) {
 		query.clearParameters();
 		query.setParameter(ID_PARAMETER, id);
 	}
-	
+
 	@Override
 	public void endRecord() {
 		query.execute();
 	}
-	
+
 	@Override
 	public void literal(final String name, final String value) {
 		query.setParameter(name, value);
@@ -71,5 +88,5 @@ public final class SqlStreamSink extends DefaultStreamReceiver {
 	public void closeStream() {
 		query.close();
 	}
-	
+
 }

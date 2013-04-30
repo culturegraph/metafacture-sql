@@ -25,32 +25,36 @@ import org.culturegraph.mf.sql.util.DirectQuery;
  * Executes the received string object as an SQL statement. Any
  * result sets which may be produced by executing the statement
  * are discarded.
- * 
+ *
  * Use {@code SqlStatementPipe} if access to the result sets is
  * required.
- * 
+ *
  * In many situations it can be preferable to use prepared
- * statements instead of raw SQL statements. Use {@SqlStreamSink} 
+ * statements instead of raw SQL statements. Use {@SqlStreamSink}
  * in such situations.
- * 
+ *
  * @see SqlStatementPipe
  * @see SqlStreamSink
- * 
+ *
  * @author Christoph Böhme
  */
 public final class SqlStatementSink extends DefaultObjectReceiver<String> {
 
 	private final DirectQuery query;
-	
+
+	public SqlStatementSink(final String datasource) {
+		query = new DirectQuery(datasource, false);
+	}
+
 	public SqlStatementSink(final Connection connection) {
 		query = new DirectQuery(connection, false);
 	}
-	
+
 	@Override
 	public void process(final String sql) {
 		query.execute(sql);
 	}
-	
+
 	@Override
 	public void closeStream() {
 		query.close();
