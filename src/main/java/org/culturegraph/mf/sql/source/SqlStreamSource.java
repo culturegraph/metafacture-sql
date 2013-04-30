@@ -19,6 +19,9 @@ import java.sql.Connection;
 
 import org.culturegraph.mf.framework.DefaultObjectPipe;
 import org.culturegraph.mf.framework.StreamReceiver;
+import org.culturegraph.mf.framework.annotations.Description;
+import org.culturegraph.mf.framework.annotations.In;
+import org.culturegraph.mf.framework.annotations.Out;
 import org.culturegraph.mf.sql.util.PreparedQuery;
 
 /**
@@ -31,6 +34,9 @@ import org.culturegraph.mf.sql.util.PreparedQuery;
  *
  * @author Christoph Böhme
  */
+@Description("Executes a prepared statement or stored procedure for each object received.")
+@In(String.class)
+@Out(StreamReceiver.class)
 public final class SqlStreamSource<T> extends
 		DefaultObjectPipe<T, StreamReceiver> {
 

@@ -18,6 +18,9 @@ package org.culturegraph.mf.sql.sink;
 import java.sql.Connection;
 
 import org.culturegraph.mf.framework.DefaultStreamReceiver;
+import org.culturegraph.mf.framework.StreamReceiver;
+import org.culturegraph.mf.framework.annotations.Description;
+import org.culturegraph.mf.framework.annotations.In;
 import org.culturegraph.mf.sql.pipe.SqlStreamPipe;
 import org.culturegraph.mf.sql.util.PreparedQuery;
 
@@ -41,6 +44,8 @@ import org.culturegraph.mf.sql.util.PreparedQuery;
  * @author Christoph Böhme
  *
  */
+@Description("Executes a prepared query for each record received.")
+@In(StreamReceiver.class)
 public final class SqlStreamSink extends DefaultStreamReceiver {
 
 	public static final String ID_PARAMETER = "_ID";
