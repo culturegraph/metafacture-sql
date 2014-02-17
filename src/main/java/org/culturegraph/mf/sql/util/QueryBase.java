@@ -38,10 +38,18 @@ import org.culturegraph.mf.sql.util.JdbcUtil.Bug;
  */
 public abstract class QueryBase {
 
+	
+	private final String idColumnLabel;
+	
 	private final EnumSet<Bug> driverBugs;
 	private final boolean emitGeneratedKeys;
-
+	
 	public QueryBase(final Connection connection, final boolean emitGeneratedKeys) {
+		this(connection, "_id", emitGeneratedKeys);
+	}
+
+	public QueryBase(final Connection connection, String idColumnLabel, final boolean emitGeneratedKeys) {
+		this.idColumnLabel=idColumnLabel;
 		this.emitGeneratedKeys = emitGeneratedKeys;
 		driverBugs = JdbcUtil.getDriverBugs(connection);
 	}
@@ -86,18 +94,33 @@ public abstract class QueryBase {
 			final InitialContext ctx = new InitialContext();
 			final DataSource datasource = (DataSource) ctx.lookup(datasourceName);
 			return datasource.getConnection();
-		} catch (final NamingException | SQLException e) {
-			throw new MetafactureException(e);
+		} catch (final NamingException ne) {
+			throw new MetafactureException(ne);
+		} catch (final SQLException se) {
+			throw new MetafactureException(se);
 		}
 	}
 
-	private static void emitRecords(final ResultSet resultSet, final StreamReceiver receiver) {
+	private void emitRecords(final ResultSet resultSet, final StreamReceiver receiver) {
 		try {
+			boolean hasIdColumnLabel=false;
 			final ResultSetMetaData resultSetMeta = resultSet.getMetaData();
+			for (int i = 1; i <= resultSetMeta.getColumnCount(); ++i) {
+				if(resultSetMeta.getColumnLabel(i).equalsIgnoreCase(idColumnLabel)){
+					hasIdColumnLabel=true;
+					break;
+				}
+			}
+			
 			while (resultSet.next()) {
-				receiver.startRecord("");  // TODO: Add id
+				if(hasIdColumnLabel){
+					receiver.startRecord(resultSet.getString(idColumnLabel));  
+				}
+				else{
+					receiver.startRecord("");
+				}
 				for (int i = 1; i <= resultSetMeta.getColumnCount(); ++i) {
-					receiver.literal(resultSetMeta.getColumnName(i), resultSet.getString(i));
+					receiver.literal(resultSetMeta.getColumnLabel(i), resultSet.getString(i));
 				}
 				receiver.endRecord();
 			}
@@ -108,5 +131,6 @@ public abstract class QueryBase {
 			catch (final SQLException e) { /* Ignore exception */ }
 		}
 	}
-
+	
+	
 }

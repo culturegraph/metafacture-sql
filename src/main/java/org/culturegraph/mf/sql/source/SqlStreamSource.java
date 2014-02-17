@@ -47,6 +47,10 @@ public final class SqlStreamSource<T> extends
 
 	private PreparedQuery statement;
 
+	private String idColumnLabel;
+
+	private String sql;
+
 	public SqlStreamSource(final String datasource) {
 		this.datasource = datasource;
 		this.connection = null;
@@ -59,15 +63,24 @@ public final class SqlStreamSource<T> extends
 	}
 
 	public void setStatement(final String sql) {
-		if (datasource != null) {
-			statement = new PreparedQuery(datasource, sql, true);
-		} else if (connection != null) {
-			statement = new PreparedQuery(connection, sql, true);
-		}
+		this.sql=sql;
+	}
+	
+	public void setIdColumnLabel(String idColumnLabel){
+		this.idColumnLabel=idColumnLabel;
+		
 	}
 
 	@Override
 	public void process(final T obj) {
+		if(statement==null){
+			if (datasource != null) {
+				statement = new PreparedQuery(datasource, sql, idColumnLabel, true);
+			} else if (connection != null) {
+				statement = new PreparedQuery(connection, sql, idColumnLabel, true);
+			}
+		}
+		
 		statement.clearParameters();
 		statement.setParameter("obj", obj.toString());
 		statement.execute(getReceiver());

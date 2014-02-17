@@ -22,6 +22,7 @@ public final class SqlStreamSourceTest {
 
 	private static final String DB_URL = "jdbc:h2:mem:";
 
+	private static final String COLUMN1 = "KEY";
 	private static final String COLUMN2 = "NAME";
 	private static final String KEY1 = "101";
 	private static final String KEY2 = "102";
@@ -36,6 +37,9 @@ public final class SqlStreamSourceTest {
 
 	private static final String SELECT =
 			"SELECT name FROM Test WHERE key = :obj";
+
+	private static final String SELECT_ALL =
+			"SELECT key, name FROM Test WHERE key = :obj";
 
 	private Database database;
 
@@ -66,7 +70,7 @@ public final class SqlStreamSourceTest {
 		expected.endRecord();
 		expected.closeStream();
 
-		final SqlStreamSource<String> source = new SqlStreamSource<>(database.getConnection());
+		final SqlStreamSource<String> source = new SqlStreamSource<String>(database.getConnection());
 		source.setStatement(SELECT);
 		final StreamValidator validator = new StreamValidator(expected.getEvents());
 		source.setReceiver(validator);
@@ -74,6 +78,29 @@ public final class SqlStreamSourceTest {
 		try {
 			source.process(KEY2);
 			source.process(KEY1);
+			source.process(KEY2);
+			source.closeStream();
+		} catch (final FormatException e) {
+			fail(e.toString());
+		}
+	}
+	
+	@Test
+	public void testShouldSetIdNameToColumnLabel() throws SQLException {
+		final EventList expected = new EventList();
+		expected.startRecord(KEY2);
+		expected.literal(COLUMN1, KEY2);
+		expected.literal(COLUMN2, NAME2);
+		expected.endRecord();
+		expected.closeStream();
+
+		final SqlStreamSource<String> source = new SqlStreamSource<String>(database.getConnection());
+		source.setStatement(SELECT_ALL);
+		source.setIdColumnLabel(COLUMN1);
+		final StreamValidator validator = new StreamValidator(expected.getEvents());
+		source.setReceiver(validator);
+
+		try {
 			source.process(KEY2);
 			source.closeStream();
 		} catch (final FormatException e) {
