@@ -76,14 +76,13 @@ public final class JdbcUtil {
 		try { driverName = connection.getMetaData().getDriverName(); }
 		catch (SQLException e) { throw new MetafactureException(e); }
 		
-		switch (driverName) {
-		case "PostgreSQL Native Driver":
+		if (driverName.compareToIgnoreCase("PostgreSQL Native Driver")==0) {
 			driverBugs.add(Bug.RETURN_GENERATED_KEYS_PRODUCES_INVALID_SQL);
-			break;
-		case "SQLiteJDBC":
+		}
+		else if (driverName.compareToIgnoreCase("SQLiteJDBC")==0) {
 			driverBugs.add(Bug.GET_RESULT_SET_THROWS_ILLEGAL_EXCEPTION);
 			driverBugs.add(Bug.GET_UPDATE_COUNT_THROWS_ILLEGAL_EXCEPTION);
-			break;
+			
 		}
 		
 		return driverBugs;

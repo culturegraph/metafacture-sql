@@ -41,7 +41,7 @@ public final class PreparedQuery extends QueryBase {
 	private static final Pattern PARAMETER = Pattern.compile(":([a-zA-Z_]+[a-z-A-Z_0-9]*)");
 
 	private final PreparedStatement statement;
-	private final Map<String, List<Integer>> parameterMap = new HashMap<>();
+	private final Map<String, List<Integer>> parameterMap = new HashMap<String, List<Integer>>();
 
 	public PreparedQuery(final String datasource, final String sql, final boolean emitGeneratedKeys) {
 		this(getConnection(datasource), sql, emitGeneratedKeys);

@@ -35,7 +35,7 @@ public final class DataSet {
 	final List<Map<String, Object>> data;
 	
 	public DataSet() {
-		data = new LinkedList<>();
+		data = new LinkedList<Map<String, Object>>();
 	}
 
 	public DataSet(final Database database, final String query) throws SQLException {

@@ -66,7 +66,7 @@ public final class SqlStreamSourceTest {
 		expected.endRecord();
 		expected.closeStream();
 
-		final SqlStreamSource<String> source = new SqlStreamSource<>(database.getConnection());
+		final SqlStreamSource<String> source = new SqlStreamSource<String>(database.getConnection());
 		source.setStatement(SELECT);
 		final StreamValidator validator = new StreamValidator(expected.getEvents());
 		source.setReceiver(validator);
