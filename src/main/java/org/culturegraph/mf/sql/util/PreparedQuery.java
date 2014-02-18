@@ -44,11 +44,19 @@ public final class PreparedQuery extends QueryBase {
 	private final Map<String, List<Integer>> parameterMap = new HashMap<String, List<Integer>>();
 
 	public PreparedQuery(final String datasource, final String sql, final boolean emitGeneratedKeys) {
-		this(getConnection(datasource), sql, emitGeneratedKeys);
+		this(getConnection(datasource), sql, DEFAULT_ID_COLUMN, emitGeneratedKeys);
+	}
+	
+	public PreparedQuery(final Connection connection, final String sql, final boolean emitGeneratedKeys) {
+		this(connection, sql, DEFAULT_ID_COLUMN, emitGeneratedKeys);
+	}
+	
+	public PreparedQuery(final String datasource, final String sql, String idColumnLabel, final boolean emitGeneratedKeys) {
+		this(getConnection(datasource), sql, idColumnLabel, emitGeneratedKeys);
 	}
 
-	public PreparedQuery(final Connection connection, final String sql, final boolean emitGeneratedKeys) {
-		super(connection, emitGeneratedKeys);
+	public PreparedQuery(final Connection connection, final String sql, String idColumnLabel, final boolean emitGeneratedKeys) {
+		super(connection, idColumnLabel, emitGeneratedKeys);
 
 		final String mappedSql = initParameterMap(sql);
 
