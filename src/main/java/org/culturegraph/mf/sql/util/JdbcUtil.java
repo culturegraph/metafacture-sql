@@ -23,36 +23,36 @@ import org.culturegraph.mf.exceptions.MetafactureException;
 
 /**
  * Utility functions for working with JDBC.
- * 
+ *
  * @author Christoph Böhme
  *
  */
 public final class JdbcUtil {
 
 	/**
-	 * Helper class to manage bugs found in various 
-	 * JDBC drivers in a clear way. 
-	 * 
+	 * Helper class to manage bugs found in various
+	 * JDBC drivers in a clear way.
+	 *
 	 * @author Christoph Böhme
 	 *
 	 */
 	public enum Bug {
 		/**
-		 * The Postgresql JDBC driver simply tacks a 
+		 * The Postgresql JDBC driver simply tacks a
 		 * RETURNING-clause to the sql statement without
 		 * checking if the statement supports this clause.
 		 */
 		RETURN_GENERATED_KEYS_PRODUCES_INVALID_SQL,
-		
+
 		/**
-		 * The Sqlite JDBC driver does not return null if 
+		 * The Sqlite JDBC driver does not return null if
 		 * the current result is not a result set but throws
 		 * an exception instead.
 		 */
 		GET_RESULT_SET_THROWS_ILLEGAL_EXCEPTION,
-		
+
 		/**
-		 * The Sqlite JDBC driver does not return -1 if 
+		 * The Sqlite JDBC driver does not return -1 if
 		 * the current result is not an update count but
 		 * throws an exception instead.
 		 */
@@ -65,28 +65,25 @@ public final class JdbcUtil {
 
 	/**
 	 * Returns the bugs exhibited by the driver used by {@code connection}.
-	 * 
+	 *
 	 * @param connection
 	 * @return
 	 */
 	public static EnumSet<Bug> getDriverBugs(final Connection connection) {
 		final EnumSet<Bug> driverBugs = EnumSet.noneOf(Bug.class);
-		
+
 		final String driverName;
 		try { driverName = connection.getMetaData().getDriverName(); }
-		catch (SQLException e) { throw new MetafactureException(e); }
-		
-		switch (driverName) {
-		case "PostgreSQL Native Driver":
+		catch (final SQLException e) { throw new MetafactureException(e); }
+
+		if ("PostgreSQL Native Driver".equals(driverName)) {
 			driverBugs.add(Bug.RETURN_GENERATED_KEYS_PRODUCES_INVALID_SQL);
-			break;
-		case "SQLiteJDBC":
+		} else if ("SQLiteJDBC".equals(driverName)) {
 			driverBugs.add(Bug.GET_RESULT_SET_THROWS_ILLEGAL_EXCEPTION);
 			driverBugs.add(Bug.GET_UPDATE_COUNT_THROWS_ILLEGAL_EXCEPTION);
-			break;
 		}
-		
+
 		return driverBugs;
 	}
-	
+
 }

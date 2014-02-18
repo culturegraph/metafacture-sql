@@ -86,8 +86,10 @@ public abstract class QueryBase {
 			final InitialContext ctx = new InitialContext();
 			final DataSource datasource = (DataSource) ctx.lookup(datasourceName);
 			return datasource.getConnection();
-		} catch (final NamingException | SQLException e) {
-			throw new MetafactureException(e);
+		} catch (final NamingException ne) {
+			throw new MetafactureException(ne);
+		} catch (final SQLException se) {
+			throw new MetafactureException(se);
 		}
 	}
 
