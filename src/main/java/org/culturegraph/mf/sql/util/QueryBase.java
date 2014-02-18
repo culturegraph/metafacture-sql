@@ -39,17 +39,17 @@ import org.culturegraph.mf.sql.util.JdbcUtil.Bug;
 public abstract class QueryBase {
 
 	public static final String DEFAULT_ID_COLUMN = "_id";
-	
-	private final String idColumnLabel;	
+
+	private final String idColumnLabel;
 	private final boolean emitGeneratedKeys;
 	private final EnumSet<Bug> driverBugs;
-	
+
 	public QueryBase(final Connection connection, final boolean emitGeneratedKeys) {
 		this(connection, DEFAULT_ID_COLUMN, emitGeneratedKeys);
 	}
 
-	public QueryBase(final Connection connection, String idColumnLabel, final boolean emitGeneratedKeys) {
-		this.idColumnLabel=idColumnLabel;
+	public QueryBase(final Connection connection, final String idColumnLabel, final boolean emitGeneratedKeys) {
+		this.idColumnLabel = idColumnLabel;
 		this.emitGeneratedKeys = emitGeneratedKeys;
 		driverBugs = JdbcUtil.getDriverBugs(connection);
 	}
@@ -111,10 +111,10 @@ public abstract class QueryBase {
 					break;
 				}
 			}
-			
+
 			while (resultSet.next()) {
 				if (hasIdColumnLabel) {
-					receiver.startRecord(resultSet.getString(idColumnLabel));  
+					receiver.startRecord(resultSet.getString(idColumnLabel));
 				} else {
 					receiver.startRecord("");
 				}

@@ -23,6 +23,7 @@ import org.culturegraph.mf.framework.annotations.Description;
 import org.culturegraph.mf.framework.annotations.In;
 import org.culturegraph.mf.framework.annotations.Out;
 import org.culturegraph.mf.sql.util.PreparedQuery;
+import org.culturegraph.mf.sql.util.QueryBase;
 
 /**
  * Executes a prepared statement or stored procedure for each
@@ -45,7 +46,7 @@ public final class SqlStreamSource<T> extends
 	private final String datasource;
 	private final Connection connection;
 
-	private String idColumnLabel;
+	private String idColumnLabel = QueryBase.DEFAULT_ID_COLUMN;
 	private String sql;
 
 	private PreparedQuery statement;
@@ -64,9 +65,9 @@ public final class SqlStreamSource<T> extends
 	public void setStatement(final String sql) {
 		this.sql = sql;
 	}
-	
-	public void setIdColumnLabel(String idColumnLabel){
-		this.idColumnLabel = idColumnLabel;	
+
+	public void setIdColumnLabel(final String idColumnLabel){
+		this.idColumnLabel = idColumnLabel;
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public final class SqlStreamSource<T> extends
 				statement = new PreparedQuery(connection, sql, idColumnLabel, true);
 			}
 		}
-		
+
 		statement.clearParameters();
 		statement.setParameter("obj", obj.toString());
 		statement.execute(getReceiver());

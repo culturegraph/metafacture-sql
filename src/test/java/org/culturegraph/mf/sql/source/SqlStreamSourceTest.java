@@ -72,6 +72,7 @@ public final class SqlStreamSourceTest {
 
 		final SqlStreamSource<String> source = new SqlStreamSource<String>(database.getConnection());
 		source.setStatement(SELECT);
+		source.setIdColumnLabel(COLUMN1);
 		final StreamValidator validator = new StreamValidator(expected.getEvents());
 		source.setReceiver(validator);
 
@@ -84,7 +85,7 @@ public final class SqlStreamSourceTest {
 			fail(e.toString());
 		}
 	}
-	
+
 	@Test
 	public void testShouldSetIdNameToColumnLabel() throws SQLException {
 		final EventList expected = new EventList();
