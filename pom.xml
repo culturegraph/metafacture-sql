@@ -82,7 +82,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.0</version>
+				<version>2.2</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -90,13 +90,14 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>${project.build.directory}/${project.name}-${project.version}-plugin.jar</outputFile>
 							<minimizeJar>true</minimizeJar>
 							<artifactSet>
 								<excludes>
 									<exclude>org.culturegraph:metafacture-core</exclude>
 								</excludes>
 							</artifactSet>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>plugin</shadedClassifierName>
 						</configuration>
 					</execution>
 				</executions>
