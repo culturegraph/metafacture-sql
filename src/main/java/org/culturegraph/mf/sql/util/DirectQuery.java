@@ -19,14 +19,18 @@ public final class DirectQuery extends QueryBase {
 	public DirectQuery(final Connection connection, final boolean emitGeneratedKeys) {
 		super(connection, emitGeneratedKeys);
 
-		try { statement = connection.createStatement(); }
-		catch (final SQLException e) { throw new MetafactureException(e); }
+		try {
+			statement = connection.createStatement();
+			if (hasDriverBug(Bug.RESULT_SET_STREAMING_ONLY_IF_FETCH_SIZE_IS_MIN_VALUE)) {
+				statement.setFetchSize(Integer.MIN_VALUE);
+			}
+		} catch (final SQLException e) {
+			throw new MetafactureException(e);
+		}
 	}
 
 	public void execute(final String sql) {
-		try {
-			statement.execute(sql, Statement.NO_GENERATED_KEYS);
-		}
+		try { statement.execute(sql, Statement.NO_GENERATED_KEYS); }
 		catch (final SQLException e) { throw new MetafactureException(e); }
 	}
 

@@ -56,7 +56,19 @@ public final class JdbcUtil {
 		 * the current result is not an update count but
 		 * throws an exception instead.
 		 */
-		GET_UPDATE_COUNT_THROWS_ILLEGAL_EXCEPTION
+		GET_UPDATE_COUNT_THROWS_ILLEGAL_EXCEPTION,
+
+		/**
+		 * The MySQL Connector/J only streams result sets
+		 * if statements are configured with a fetch size
+		 * of {@code Integer.MIN_VALUE} and the options
+		 * TYPE_FORWARD_ONLY and CONCUR_READ_ONLY.
+		 * See https://dev.mysql.com/doc/connector-j/en/connector-j-reference-implementation-notes.html
+		 * for details. Since this fetch size setting does
+		 * not seem to be specified JDBC behaviour, we handle
+		 * it as a special case.
+		 */
+		RESULT_SET_STREAMING_ONLY_IF_FETCH_SIZE_IS_MIN_VALUE
 	}
 
 	private JdbcUtil() {
@@ -81,6 +93,9 @@ public final class JdbcUtil {
 		} else if ("SQLiteJDBC".equals(driverName)) {
 			driverBugs.add(Bug.GET_RESULT_SET_THROWS_ILLEGAL_EXCEPTION);
 			driverBugs.add(Bug.GET_UPDATE_COUNT_THROWS_ILLEGAL_EXCEPTION);
+		} else if ("MySQL-AB JDBC Driver".equals(driverName)
+				|| "MySQL Connector Java".equals(driverName)) {
+			driverBugs.add(Bug.RESULT_SET_STREAMING_ONLY_IF_FETCH_SIZE_IS_MIN_VALUE);
 		}
 
 		return driverBugs;
