@@ -80,6 +80,9 @@ public final class SqlStreamSource<T> extends
 
 	@Override
 	protected void onCloseStream() {
-		statement.close();
+		if (statement != null) {
+			statement.close();
+		}
 	}
+
 }
