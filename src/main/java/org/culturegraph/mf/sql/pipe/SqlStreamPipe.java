@@ -24,6 +24,7 @@ import org.culturegraph.mf.framework.annotations.In;
 import org.culturegraph.mf.framework.annotations.Out;
 import org.culturegraph.mf.sql.sink.SqlStreamSink;
 import org.culturegraph.mf.sql.util.PreparedQuery;
+import org.culturegraph.mf.sql.util.QueryBase;
 
 /**
  * Executes a prepared query for each record received. Each
@@ -48,6 +49,9 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 	private final String datasource;
 	private final Connection connection;
 
+	private String idColumnLabel = QueryBase.DEFAULT_ID_COLUMN;
+	private String sql;
+
 	private PreparedQuery query;
 
 	public SqlStreamPipe(final String datasource) {
@@ -61,32 +65,46 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 	}
 
 	public void setQuery(final String sql) {
-		if (datasource != null) {
-			this.query = new PreparedQuery(datasource, sql, true);
-		} else if (connection != null) {
-			this.query = new PreparedQuery(connection, sql, true);
-		}
+		this.sql = sql;
+	}
+
+	public void setIdColumnLabel(final String idColumnLabel){
+		this.idColumnLabel = idColumnLabel;
 	}
 
 	@Override
 	public void startRecord(final String id) {
+		if (query == null) {
+			if (datasource != null) {
+				this.query = new PreparedQuery(datasource, sql, idColumnLabel, true);
+			} else if (connection != null) {
+				this.query = new PreparedQuery(connection, sql, idColumnLabel, true);
+			}
+		}
+
 		query.clearParameters();
 		query.setParameter(ID_PARAMETER, id);
 	}
 
 	@Override
 	public void endRecord() {
+		assert query != null: "startRecord was not called";
+
 		query.execute(getReceiver());
 	}
 
 	@Override
 	public void literal(final String name, final String value) {
+		assert query != null: "startRecord was not called";
+
 		query.setParameter(name, value);
 	}
 
 	@Override
 	protected void onCloseStream() {
-		query.close();
+		if (query != null) {
+			query.close();
+		}
 	}
 
 }
