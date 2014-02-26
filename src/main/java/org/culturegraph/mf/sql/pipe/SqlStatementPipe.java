@@ -25,6 +25,7 @@ import org.culturegraph.mf.framework.annotations.Out;
 import org.culturegraph.mf.sql.sink.SqlStatementSink;
 import org.culturegraph.mf.sql.util.DirectQuery;
 import org.culturegraph.mf.sql.util.JdbcUtil;
+import org.culturegraph.mf.sql.util.QueryBase;
 
 /**
  * Executes the received string object as an SQL statement.
@@ -50,24 +51,37 @@ import org.culturegraph.mf.sql.util.JdbcUtil;
 public final class SqlStatementPipe extends
 		DefaultObjectPipe<String, StreamReceiver> {
 
-	private final DirectQuery query;
+	private final Connection connection;
+
+	private String idColumnLabel = QueryBase.DEFAULT_ID_COLUMN;
+	private DirectQuery query;
 
 	public SqlStatementPipe(final String datasource) {
 		this(JdbcUtil.getConnection(datasource));
 	}
 
 	public SqlStatementPipe(final Connection connection) {
-		query = new DirectQuery(connection, true);
+		this.connection = connection;
+	}
+
+	public void setIdColumnLabel(final String idColumnLabel) {
+		this.idColumnLabel = idColumnLabel;
 	}
 
 	@Override
 	public void process(final String sql) {
+		if (query == null) {
+			query = new DirectQuery(connection, idColumnLabel, true);
+		}
+
 		query.execute(sql, getReceiver());
 	}
 
 	@Override
 	protected void onCloseStream() {
-		query.close();
+		if (query != null) {
+			query.close();
+		}
 	}
 
 }
