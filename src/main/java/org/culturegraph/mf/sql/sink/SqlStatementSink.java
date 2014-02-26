@@ -22,6 +22,7 @@ import org.culturegraph.mf.framework.annotations.Description;
 import org.culturegraph.mf.framework.annotations.In;
 import org.culturegraph.mf.sql.pipe.SqlStatementPipe;
 import org.culturegraph.mf.sql.util.DirectQuery;
+import org.culturegraph.mf.sql.util.JdbcUtil;
 
 /**
  * Executes the received string object as an SQL statement. Any
@@ -47,7 +48,7 @@ public final class SqlStatementSink extends DefaultObjectReceiver<String> {
 	private final DirectQuery query;
 
 	public SqlStatementSink(final String datasource) {
-		query = new DirectQuery(datasource, false);
+		this(JdbcUtil.getConnection(datasource));
 	}
 
 	public SqlStatementSink(final Connection connection) {

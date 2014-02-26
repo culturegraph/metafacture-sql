@@ -23,6 +23,7 @@ import org.culturegraph.mf.framework.annotations.Description;
 import org.culturegraph.mf.framework.annotations.In;
 import org.culturegraph.mf.framework.annotations.Out;
 import org.culturegraph.mf.sql.sink.SqlStreamSink;
+import org.culturegraph.mf.sql.util.JdbcUtil;
 import org.culturegraph.mf.sql.util.PreparedQuery;
 import org.culturegraph.mf.sql.util.QueryBase;
 
@@ -46,7 +47,6 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 
 	public static final String ID_PARAMETER = "_ID";
 
-	private final String datasource;
 	private final Connection connection;
 
 	private String idColumnLabel = QueryBase.DEFAULT_ID_COLUMN;
@@ -55,12 +55,10 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 	private PreparedQuery query;
 
 	public SqlStreamPipe(final String datasource) {
-		this.datasource = datasource;
-		this.connection = null;
+		this.connection = JdbcUtil.getConnection(datasource);
 	}
 
 	public SqlStreamPipe(final Connection connection) {
-		this.datasource = null;
 		this.connection = connection;
 	}
 
@@ -75,11 +73,7 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 	@Override
 	public void startRecord(final String id) {
 		if (query == null) {
-			if (datasource != null) {
-				this.query = new PreparedQuery(datasource, sql, idColumnLabel, true);
-			} else if (connection != null) {
-				this.query = new PreparedQuery(connection, sql, idColumnLabel, true);
-			}
+			this.query = new PreparedQuery(connection, sql, idColumnLabel, true);
 		}
 
 		query.clearParameters();

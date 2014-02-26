@@ -22,6 +22,7 @@ import org.culturegraph.mf.framework.StreamReceiver;
 import org.culturegraph.mf.framework.annotations.Description;
 import org.culturegraph.mf.framework.annotations.In;
 import org.culturegraph.mf.framework.annotations.Out;
+import org.culturegraph.mf.sql.util.JdbcUtil;
 import org.culturegraph.mf.sql.util.PreparedQuery;
 import org.culturegraph.mf.sql.util.QueryBase;
 
@@ -43,7 +44,6 @@ public final class SqlStreamSource<T> extends
 
 	public static final String PARAMETER = "obj";
 
-	private final String datasource;
 	private final Connection connection;
 
 	private String idColumnLabel = QueryBase.DEFAULT_ID_COLUMN;
@@ -52,13 +52,10 @@ public final class SqlStreamSource<T> extends
 	private PreparedQuery statement;
 
 	public SqlStreamSource(final String datasource) {
-		this.datasource = datasource;
-		this.connection = null;
-
+		this.connection = JdbcUtil.getConnection(datasource);
 	}
 
 	public SqlStreamSource(final Connection connection) {
-		this.datasource = null;
 		this.connection = connection;
 	}
 
@@ -73,11 +70,7 @@ public final class SqlStreamSource<T> extends
 	@Override
 	public void process(final T obj) {
 		if (statement == null) {
-			if (datasource != null) {
-				statement = new PreparedQuery(datasource, sql, idColumnLabel, true);
-			} else if (connection != null) {
-				statement = new PreparedQuery(connection, sql, idColumnLabel, true);
-			}
+			statement = new PreparedQuery(connection, sql, idColumnLabel, true);
 		}
 
 		statement.clearParameters();

@@ -19,6 +19,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.EnumSet;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import org.culturegraph.mf.exceptions.MetafactureException;
 
 /**
@@ -99,6 +103,19 @@ public final class JdbcUtil {
 		}
 
 		return driverBugs;
+	}
+
+
+	public static Connection getConnection(final String datasourceName) {
+		try {
+			final InitialContext ctx = new InitialContext();
+			final DataSource datasource = (DataSource) ctx.lookup(datasourceName);
+			return datasource.getConnection();
+		} catch (final NamingException ne) {
+			throw new MetafactureException(ne);
+		} catch (final SQLException se) {
+			throw new MetafactureException(se);
+		}
 	}
 
 }

@@ -12,12 +12,12 @@ public final class DirectQuery extends QueryBase {
 
 	private final Statement statement;
 
-	public DirectQuery(final String datasource, final boolean emitGeneratedKeys) {
-		this(getConnection(datasource), emitGeneratedKeys);
+	public DirectQuery(final Connection connection, final boolean emitGeneratedKeys) {
+		this(connection, QueryBase.DEFAULT_ID_COLUMN, emitGeneratedKeys);
 	}
 
-	public DirectQuery(final Connection connection, final boolean emitGeneratedKeys) {
-		super(connection, emitGeneratedKeys);
+	public DirectQuery(final Connection connection, final String idColumnLabel, final boolean emitGeneratedKeys) {
+		super(connection, idColumnLabel, emitGeneratedKeys);
 
 		try {
 			statement = connection.createStatement();

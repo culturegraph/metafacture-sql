@@ -22,10 +22,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.EnumSet;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.culturegraph.mf.exceptions.MetafactureException;
 import org.culturegraph.mf.framework.StreamReceiver;
 import org.culturegraph.mf.sql.util.JdbcUtil.Bug;
@@ -43,10 +39,6 @@ public abstract class QueryBase {
 	private final String idColumnLabel;
 	private final boolean emitGeneratedKeys;
 	private final EnumSet<Bug> driverBugs;
-
-	public QueryBase(final Connection connection, final boolean emitGeneratedKeys) {
-		this(connection, DEFAULT_ID_COLUMN, emitGeneratedKeys);
-	}
 
 	public QueryBase(final Connection connection, final String idColumnLabel, final boolean emitGeneratedKeys) {
 		this.idColumnLabel = idColumnLabel;
@@ -87,18 +79,6 @@ public abstract class QueryBase {
 			throw new MetafactureException(e);
 		}
 
-	}
-
-	protected static Connection getConnection(final String datasourceName) {
-		try {
-			final InitialContext ctx = new InitialContext();
-			final DataSource datasource = (DataSource) ctx.lookup(datasourceName);
-			return datasource.getConnection();
-		} catch (final NamingException ne) {
-			throw new MetafactureException(ne);
-		} catch (final SQLException se) {
-			throw new MetafactureException(se);
-		}
 	}
 
 	private void emitRecords(final ResultSet resultSet, final StreamReceiver receiver) {

@@ -22,6 +22,7 @@ import org.culturegraph.mf.framework.StreamReceiver;
 import org.culturegraph.mf.framework.annotations.Description;
 import org.culturegraph.mf.framework.annotations.In;
 import org.culturegraph.mf.sql.pipe.SqlStreamPipe;
+import org.culturegraph.mf.sql.util.JdbcUtil;
 import org.culturegraph.mf.sql.util.PreparedQuery;
 
 /**
@@ -50,27 +51,20 @@ public final class SqlStreamSink extends DefaultStreamReceiver {
 
 	public static final String ID_PARAMETER = "_ID";
 
-	private final String datasource;
 	private final Connection connection;
 
 	private PreparedQuery query;
 
 	public SqlStreamSink(final String datasource) {
-		this.datasource = datasource;
-		this.connection = null;
+		this.connection = JdbcUtil.getConnection(datasource);
 	}
 
 	public SqlStreamSink(final Connection connection) {
-		this.datasource = null;
 		this.connection = connection;
 	}
 
 	public void setQuery(final String sql) {
-		if (datasource != null) {
-			this.query = new PreparedQuery(datasource, sql, false);
-		} else if (connection != null) {
-			this.query = new PreparedQuery(connection, sql, false);
-		}
+		this.query = new PreparedQuery(connection, sql, false);
 	}
 
 	@Override
