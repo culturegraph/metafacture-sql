@@ -99,7 +99,10 @@ public class QueryBase {
 					receiver.startRecord("");
 				}
 				for (int i = 1; i <= resultSetMeta.getColumnCount(); ++i) {
-					receiver.literal(resultSetMeta.getColumnLabel(i), resultSet.getString(i));
+					final String value = resultSet.getString(i);
+					if (value != null) {
+						receiver.literal(resultSetMeta.getColumnLabel(i), value);
+					}
 				}
 				receiver.endRecord();
 			}
