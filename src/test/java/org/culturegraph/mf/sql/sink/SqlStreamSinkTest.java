@@ -20,8 +20,7 @@ import static org.junit.Assert.assertEquals;
 import java.sql.SQLException;
 
 import org.culturegraph.mf.sql.util.DataSet;
-import org.culturegraph.mf.sql.util.Database;
-import org.junit.After;
+import org.culturegraph.mf.sql.util.DatabaseBasedTest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,9 +30,7 @@ import org.junit.Test;
  * @author Christoph Böhme
  *
  */
-public final class SqlStreamSinkTest {
-
-	private static final String DB_URL = "jdbc:h2:mem:";
+public final class SqlStreamSinkTest extends DatabaseBasedTest {
 
 	private static final String COLUMN1 = "key";
 	private static final String COLUMN2 = "name";
@@ -53,22 +50,15 @@ public final class SqlStreamSinkTest {
 	private static final String SELECT =
 			"SELECT * FROM Test";
 
-	private Database database;
-
 	@Before
-	public void setupDBConnection() throws SQLException {
-		database = new Database(DB_URL)
+	public void populateDatabase() throws SQLException {
+		getDatabase()
 			.run(CREATE_TABLE);
-	}
-
-	@After
-	public void closeDBConnection() throws SQLException {
-		database.close();
 	}
 
 	@Test
 	public void testSqlStreamSink() throws SQLException {
-		final SqlStreamSink sink = new SqlStreamSink(database.getConnection());
+		final SqlStreamSink sink = new SqlStreamSink(getDatabase().getConnection());
 		sink.setQuery(INSERT);
 
 		sink.startRecord(KEY1);
@@ -81,7 +71,7 @@ public final class SqlStreamSinkTest {
 		sink.endRecord();
 		sink.closeStream();
 
-		final DataSet actual = new DataSet(database, SELECT);
+		final DataSet actual = new DataSet(getDatabase(), SELECT);
 		final DataSet expected = new DataSet()
 			.addRow()
 				.put(COLUMN1, KEY1)

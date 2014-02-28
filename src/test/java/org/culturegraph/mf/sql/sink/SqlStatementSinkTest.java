@@ -19,59 +19,49 @@ import static org.junit.Assert.assertEquals;
 
 import java.sql.SQLException;
 
-import org.culturegraph.mf.sql.util.Database;
 import org.culturegraph.mf.sql.util.DataSet;
-import org.junit.After;
+import org.culturegraph.mf.sql.util.DatabaseBasedTest;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Tests for {@link SQLStatementSink}.
- * 
+ *
  * @author Christoph Böhme
  *
  */
-public final class SqlStatementSinkTest {
+public final class SqlStatementSinkTest extends DatabaseBasedTest {
 
-	private static final String DB_URL = "jdbc:h2:mem:";
-	
 	private static final String COLUMN1 = "key";
 	private static final String COLUMN2 = "name";
 	private static final String KEY1 = "101";
 	private static final String KEY2 = "102";
 	private static final String NAME1 = "al-Chwarizmi";
 	private static final String NAME2 = "Ibn an-Nadīm";
-	
-	private static final String CREATE_TABLE = 
+
+	private static final String CREATE_TABLE =
 			"CREATE TABLE Test (key VARCHAR(10), name VARCHAR(50))";
-	
-	private static final String INSERT = 
+
+	private static final String INSERT =
 			"INSERT INTO Test (key, name) VALUES ('%s', '%s')";
 
-	private static final String SELECT = 
+	private static final String SELECT =
 			"SELECT * FROM Test";
-	
-	private Database database;
 
 	@Before
-	public void setupDBConnection() throws SQLException {
-		database = new Database(DB_URL)
+	public void populateDatabase() throws SQLException {
+		getDatabase()
 			.run(CREATE_TABLE);
 	}
-	
-	@After
-	public void closeDBConnection() throws SQLException {
-		database.close();
-	}
-	
+
 	@Test
-	public void testSqlStatementSink() throws SQLException {	
-		final SqlStatementSink sink = new SqlStatementSink(database.getConnection());
+	public void testSqlStatementSink() throws SQLException {
+		final SqlStatementSink sink = new SqlStatementSink(getDatabase().getConnection());
 		sink.process(String.format(INSERT, KEY1, NAME1));
 		sink.process(String.format(INSERT, KEY2, NAME2));
 		sink.closeStream();
 
-		final DataSet actual = new DataSet(database, SELECT);
+		final DataSet actual = new DataSet(getDatabase(), SELECT);
 		final DataSet expected = new DataSet()
 			.addRow()
 				.put(COLUMN1, KEY1)
@@ -79,7 +69,7 @@ public final class SqlStatementSinkTest {
 			.addRow()
 				.put(COLUMN1, KEY2)
 				.put(COLUMN2, NAME2);
-		
+
 		assertEquals(expected, actual);
 	}
 

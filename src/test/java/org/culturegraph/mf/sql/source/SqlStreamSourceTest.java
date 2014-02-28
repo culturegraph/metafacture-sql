@@ -5,10 +5,9 @@ import static org.junit.Assert.fail;
 import java.sql.SQLException;
 
 import org.culturegraph.mf.exceptions.FormatException;
-import org.culturegraph.mf.sql.util.Database;
+import org.culturegraph.mf.sql.util.DatabaseBasedTest;
 import org.culturegraph.mf.stream.sink.EventList;
 import org.culturegraph.mf.stream.sink.StreamValidator;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,9 +17,7 @@ import org.junit.Test;
  * @author Christoph Böhme
  *
  */
-public final class SqlStreamSourceTest {
-
-	private static final String DB_URL = "jdbc:h2:mem:";
+public final class SqlStreamSourceTest extends DatabaseBasedTest {
 
 	private static final String COLUMN1 = "KEY";
 	private static final String COLUMN2 = "NAME";
@@ -41,19 +38,12 @@ public final class SqlStreamSourceTest {
 	private static final String SELECT_ALL =
 			"SELECT key, name FROM Test WHERE key = :obj";
 
-	private Database database;
-
 	@Before
-	public void setupDBConnection() throws SQLException {
-		database = new Database(DB_URL)
+	public void populateDatabase() throws SQLException {
+		getDatabase()
 			.run(CREATE_TABLE)
 			.run(String.format(INSERT, KEY1, NAME1))
 			.run(String.format(INSERT, KEY2, NAME2));
-	}
-
-	@After
-	public void closeDBConnection() throws SQLException {
-		database.close();
 	}
 
 	@Test
@@ -70,7 +60,7 @@ public final class SqlStreamSourceTest {
 		expected.endRecord();
 		expected.closeStream();
 
-		final SqlStreamSource<String> source = new SqlStreamSource<String>(database.getConnection());
+		final SqlStreamSource<String> source = new SqlStreamSource<String>(getDatabase().getConnection());
 		source.setStatement(SELECT);
 		source.setIdColumnLabel(COLUMN1);
 		final StreamValidator validator = new StreamValidator(expected.getEvents());
@@ -95,7 +85,7 @@ public final class SqlStreamSourceTest {
 		expected.endRecord();
 		expected.closeStream();
 
-		final SqlStreamSource<String> source = new SqlStreamSource<String>(database.getConnection());
+		final SqlStreamSource<String> source = new SqlStreamSource<String>(getDatabase().getConnection());
 		source.setStatement(SELECT_ALL);
 		source.setIdColumnLabel(COLUMN1);
 		final StreamValidator validator = new StreamValidator(expected.getEvents());
