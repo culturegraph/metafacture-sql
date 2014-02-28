@@ -32,7 +32,7 @@ import org.culturegraph.mf.sql.util.JdbcUtil.Bug;
  * @author Christoph Böhme
  *
  */
-public abstract class QueryBase {
+public class QueryBase {
 
 	public static final String DEFAULT_ID_COLUMN = "_id";
 
