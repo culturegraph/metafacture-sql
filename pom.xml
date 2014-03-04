@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.culturegraph</groupId>
 	<artifactId>metafacture-sql</artifactId>
-	<version>0.0.0</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<name>metafacture-sql</name>
 	<description>Modules to access data in sql databases</description>
 	<licenses>
@@ -33,7 +33,7 @@
  		<connection>scm:git:git://github.com/culturegraph/metafacture-sql.git</connection>
 		<developerConnection>scm:git:git@github.com:culturegraph/metafacture-sql.git</developerConnection>
 		<url>http://github.com/culturegraph/metafacture-sql</url>
-		<tag>metafacture-sql-0.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
   
 	<issueManagement>
