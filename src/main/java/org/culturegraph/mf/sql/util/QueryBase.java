@@ -40,7 +40,8 @@ public class QueryBase {
 	private final boolean emitGeneratedKeys;
 	private final EnumSet<Bug> driverBugs;
 
-	public QueryBase(final Connection connection, final String idColumnLabel, final boolean emitGeneratedKeys) {
+	public QueryBase(final Connection connection, final String idColumnLabel,
+			final boolean emitGeneratedKeys) {
 		this.idColumnLabel = idColumnLabel;
 		this.emitGeneratedKeys = emitGeneratedKeys;
 		driverBugs = JdbcUtil.getDriverBugs(connection);
@@ -54,7 +55,8 @@ public class QueryBase {
 		return emitGeneratedKeys;
 	}
 
-	protected void processResults(final Statement statement, final StreamReceiver receiver) {
+	protected void processResults(final Statement statement,
+			final StreamReceiver receiver) {
 		try {
 			ResultSet resultSet;
 			if (hasDriverBug(Bug.GET_RESULT_SET_THROWS_ILLEGAL_EXCEPTION)) {
@@ -69,24 +71,37 @@ public class QueryBase {
 			} else {
 				resultSet = statement.getResultSet();
 			}
-			if (resultSet != null) {
-				emitRecords(resultSet, receiver);
-			}
-			if (isEmitGeneratedKeys()) {
-				emitRecords(statement.getGeneratedKeys(), receiver);
+			try {
+				if (resultSet != null) {
+					emitRecords(resultSet, receiver);
+				}
+				if (isEmitGeneratedKeys()) {
+					final ResultSet generatedKeys = statement.getGeneratedKeys();
+					try {
+						emitRecords(generatedKeys, receiver);
+					} finally {
+						try { generatedKeys.close(); }
+						catch (final SQLException e) { /* Ignore exception */ }
+					}
+				}
+			} finally {
+				if (resultSet != null) {
+					try { resultSet.close(); }
+					catch (final SQLException e) { /* Ignore exception */ }
+				}
 			}
 		} catch (final SQLException e) {
 			throw new MetafactureException(e);
 		}
-
 	}
 
-	private void emitRecords(final ResultSet resultSet, final StreamReceiver receiver) {
+	private void emitRecords(final ResultSet resultSet,
+			final StreamReceiver receiver) {
 		try {
 			boolean hasIdColumnLabel = false;
 			final ResultSetMetaData resultSetMeta = resultSet.getMetaData();
 			for (int i = 1; i <= resultSetMeta.getColumnCount(); ++i) {
-				if(idColumnLabel.equalsIgnoreCase(resultSetMeta.getColumnLabel(i))){
+				if (idColumnLabel.equalsIgnoreCase(resultSetMeta.getColumnLabel(i))) {
 					hasIdColumnLabel = true;
 					break;
 				}
@@ -108,9 +123,6 @@ public class QueryBase {
 			}
 		} catch (final SQLException e) {
 			throw new MetafactureException(e);
-		} finally {
-			try { resultSet.close(); }
-			catch (final SQLException e) { /* Ignore exception */ }
 		}
 	}
 
