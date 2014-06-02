@@ -82,6 +82,7 @@ public final class SqlStatementPipe extends
 		if (query != null) {
 			query.close();
 		}
+		JdbcUtil.closeConnection(connection);
 	}
 
 }

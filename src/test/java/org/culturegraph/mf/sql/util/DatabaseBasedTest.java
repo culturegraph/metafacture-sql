@@ -28,7 +28,7 @@ import org.junit.Before;
  */
 public class DatabaseBasedTest {
 
-	private static final String DB_URL = "jdbc:h2:mem:";
+	private static final String DB_URL = "jdbc:h2:mem:sql-metafacture-test";
 
 	private Database database;
 

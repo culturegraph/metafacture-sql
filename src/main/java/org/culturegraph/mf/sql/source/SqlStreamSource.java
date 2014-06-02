@@ -83,6 +83,7 @@ public final class SqlStreamSource<T> extends
 		if (statement != null) {
 			statement.close();
 		}
+		JdbcUtil.closeConnection(connection);
 	}
 
 }

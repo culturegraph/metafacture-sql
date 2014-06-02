@@ -118,4 +118,8 @@ public final class JdbcUtil {
 		}
 	}
 
+	public static void closeConnection(final Connection connection) {
+		try { connection.close(); }
+		catch (final SQLException e) { throw new MetafactureException(e); }
+	}
 }

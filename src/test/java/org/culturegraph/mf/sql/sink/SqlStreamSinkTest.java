@@ -58,7 +58,7 @@ public final class SqlStreamSinkTest extends DatabaseBasedTest {
 
 	@Test
 	public void testSqlStreamSink() throws SQLException {
-		final SqlStreamSink sink = new SqlStreamSink(getDatabase().getConnection());
+		final SqlStreamSink sink = new SqlStreamSink(getDatabase().getClosableConnection());
 		sink.setQuery(INSERT);
 
 		sink.startRecord(KEY1);

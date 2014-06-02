@@ -26,14 +26,14 @@ import org.apache.commons.dbutils.handlers.MapListHandler;
 
 /**
  * Convenience class for comparing JDBC result sets in assertions.
- * 
+ *
  * @author Christoph Böhme
  *
  */
 public final class DataSet {
 
 	final List<Map<String, Object>> data;
-	
+
 	public DataSet() {
 		data = new LinkedList<Map<String, Object>>();
 	}
@@ -41,24 +41,24 @@ public final class DataSet {
 	public DataSet(final Database database, final String query) throws SQLException {
 		data = new QueryRunner().query(database.getConnection(), query, new MapListHandler());
 	}
-	
+
 	public DataSet addRow() {
 		data.add(new HashMap<String, Object>());
 		return this;
 	}
-	
+
 	public DataSet put(final String column, final String value) {
 		data.get(data.size() - 1).put(column, value);
 		return this;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return data.hashCode();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -71,5 +71,5 @@ public final class DataSet {
 		final DataSet other = (DataSet) obj;
 		return data.equals(other.data);
 	}
-	
+
 }

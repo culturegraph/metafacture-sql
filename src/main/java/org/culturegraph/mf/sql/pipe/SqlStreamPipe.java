@@ -99,6 +99,7 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 		if (query != null) {
 			query.close();
 		}
+		JdbcUtil.closeConnection(connection);
 	}
 
 }

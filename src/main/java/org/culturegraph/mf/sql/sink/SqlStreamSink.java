@@ -86,6 +86,7 @@ public final class SqlStreamSink extends DefaultStreamReceiver {
 	@Override
 	public void closeStream() {
 		query.close();
+		JdbcUtil.closeConnection(connection);
 	}
 
 }

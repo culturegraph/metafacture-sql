@@ -45,6 +45,8 @@ import org.culturegraph.mf.sql.util.JdbcUtil;
 @In(String.class)
 public final class SqlStatementSink extends DefaultObjectReceiver<String> {
 
+	private final Connection connection;
+
 	private final DirectQuery query;
 
 	public SqlStatementSink(final String datasource) {
@@ -52,6 +54,7 @@ public final class SqlStatementSink extends DefaultObjectReceiver<String> {
 	}
 
 	public SqlStatementSink(final Connection connection) {
+		this.connection = connection;
 		query = new DirectQuery(connection, false);
 	}
 
@@ -63,6 +66,7 @@ public final class SqlStatementSink extends DefaultObjectReceiver<String> {
 	@Override
 	public void closeStream() {
 		query.close();
+		JdbcUtil.closeConnection(connection);
 	}
 
 }

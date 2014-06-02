@@ -23,43 +23,62 @@ import java.sql.Statement;
 import org.apache.commons.dbutils.DbUtils;
 
 /**
- * Convenience class for handling database connections 
+ * Convenience class for handling database connections
  * in test cases.
- * 
+ *
  * @author Christoph Böhme
  *
  */
 public final class Database {
 
+	private final String url;
+
 	private final Connection connection;
 	private final Statement statement;
-	
+
 	public Database(final String url) throws SQLException {
-		connection = DriverManager.getConnection(url);
+		this.url = url;
+
+		connection = getClosableConnection();
 		try {
 			statement = connection.createStatement();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			DbUtils.closeQuietly(connection);
 			throw e;
 		}
 	}
-	
-	public Connection getConnection() {
+
+	/**
+	 * Returns a new connection to the database. The caller is
+	 * responsible for closing the connection.
+	 *
+	 * @return a new connection to the database
+	 * @throws SQLException
+	 */
+	public Connection getClosableConnection() throws SQLException {
+		return DriverManager.getConnection(url);
+	}
+
+	/**
+	 * Returns the default connection for the database. The caller
+	 * must not close this connection. Use {@link getCloseableConnection}
+	 * if you need a connection which can be closed.
+	 *
+	 * @return a connection to the database.
+	 * @throws SQLException
+	 */
+	public Connection getConnection() throws SQLException {
 		return connection;
 	}
-	
+
 	public Database run(final String sql) throws SQLException {
-		try {
-			statement.execute(sql);
-		} catch (SQLException e) {
-			DbUtils.closeQuietly(connection);
-			throw e;			
-		}
+		statement.execute(sql);
 		return this;
 	}
-	
+
 	public void close() {
+		DbUtils.closeQuietly(statement);
 		DbUtils.closeQuietly(connection);
 	}
-	
+
 }
