@@ -1,19 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
 	<groupId>org.culturegraph</groupId>
 	<artifactId>metafacture-sql</artifactId>
 	<version>3.0.1-SNAPSHOT</version>
+
 	<name>metafacture-sql</name>
 	<description>Modules to access data in sql databases</description>
+	<url>http://github.com/culturegraph/metafacture-sql</url>
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
 			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
 		</license>
 	</licenses>
-	<url>http://github.com/culturegraph/metafacture-sql</url>
 
- 	<developers>
+	<developers>
 		<developer>
 			<id>cboehme</id>
 			<name>Christoph Böhme</name>
@@ -29,18 +38,16 @@
 		</developer>
 	</developers>
 
-  	<scm>
+	<scm>
  		<connection>scm:git:git://github.com/culturegraph/metafacture-sql.git</connection>
 		<developerConnection>scm:git:git@github.com:culturegraph/metafacture-sql.git</developerConnection>
 		<url>http://github.com/culturegraph/metafacture-sql</url>
 		<tag>HEAD</tag>
 	</scm>
-  
 	<issueManagement>
 		<system>GitHub Issues</system>
 		<url>https://github.com/culturegraph/metafacture-sql/issues</url>
 	</issueManagement>
-
 	<distributionManagement>
 		<repository>
 			<id>sonatype-nexus-staging</id>
@@ -54,66 +61,11 @@
 			<!-- <uniqueVersion>true</uniqueVersion> -->
 		</snapshotRepository>
 	</distributionManagement>
-	
- 	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
-	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<targetJdk>1.6</targetJdk>
 	</properties>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>${targetJdk}</source>
-					<target>${targetJdk}</target>
-					<showWarnings>true</showWarnings>
-				</configuration>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<minimizeJar>true</minimizeJar>
-							<artifactSet>
-								<excludes>
-									<exclude>org.culturegraph:metafacture-core</exclude>
-								</excludes>
-							</artifactSet>
-							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>plugin</shadedClassifierName>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.4</version><!--$NO-MVN-MAN-VER$-->
-				<!-- m2e complains about a different plugin version
-				     being specified in the parent pom. However,
-				     this is not actually problem for maven. So,
-				     we can ignore the warning. -->
-			</plugin>			
-		</plugins>
-	</build>
 
 	<dependencies>
 		<dependency>
@@ -167,6 +119,55 @@
 		</dependency>
 
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>${targetJdk}</source>
+					<target>${targetJdk}</target>
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<minimizeJar>true</minimizeJar>
+							<artifactSet>
+								<excludes>
+									<exclude>org.culturegraph:metafacture-core</exclude>
+								</excludes>
+							</artifactSet>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>plugin</shadedClassifierName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.4</version><!--$NO-MVN-MAN-VER$-->
+				<!-- m2e complains about a different plugin version
+				     being specified in the parent pom. However,
+				     this is not actually problem for maven. So,
+				     we can ignore the warning. -->
+			</plugin>			
+		</plugins>
+	</build>
 
 	<profiles>
 		<profile>
