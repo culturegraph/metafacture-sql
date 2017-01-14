@@ -1,0 +1,11 @@
+* text=auto
+
+# Explicitly declare text files we want to always be normalized:
+*.java text diff=java
+*.properties text
+
+# Platform-specific scripts should always use  
+# their native end-of-line markers:
+*.bat text eol=crlf
+*.sh text eol=lf
+
