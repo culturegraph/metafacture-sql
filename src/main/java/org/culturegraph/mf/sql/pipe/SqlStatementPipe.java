@@ -25,7 +25,6 @@ import org.culturegraph.mf.framework.helpers.DefaultObjectPipe;
 import org.culturegraph.mf.sql.sink.SqlStatementSink;
 import org.culturegraph.mf.sql.util.DirectQuery;
 import org.culturegraph.mf.sql.util.JdbcUtil;
-import org.culturegraph.mf.sql.util.QueryBase;
 
 /**
  * Executes the received string object as an SQL statement. Each row of the
@@ -50,7 +49,7 @@ public final class SqlStatementPipe extends
 
 	private final Connection connection;
 
-	private String idColumnLabel = QueryBase.DEFAULT_ID_COLUMN;
+	private String idColumnLabel = DirectQuery.DEFAULT_ID_COLUMN;
 	private DirectQuery query;
 
 	public SqlStatementPipe(final String dataSource) {

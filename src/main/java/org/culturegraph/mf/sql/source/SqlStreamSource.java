@@ -24,7 +24,6 @@ import org.culturegraph.mf.framework.annotations.Out;
 import org.culturegraph.mf.framework.helpers.DefaultObjectPipe;
 import org.culturegraph.mf.sql.util.JdbcUtil;
 import org.culturegraph.mf.sql.util.PreparedQuery;
-import org.culturegraph.mf.sql.util.QueryBase;
 
 /**
  * Executes a prepared statement or stored procedure for each object received.
@@ -45,7 +44,7 @@ public final class SqlStreamSource<T> extends
 
 	private final Connection connection;
 
-	private String idColumnLabel = QueryBase.DEFAULT_ID_COLUMN;
+	private String idColumnLabel = PreparedQuery.DEFAULT_ID_COLUMN;
 	private String sql;
 
 	private PreparedQuery statement;

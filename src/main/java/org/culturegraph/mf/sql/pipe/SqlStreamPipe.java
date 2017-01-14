@@ -25,7 +25,6 @@ import org.culturegraph.mf.framework.helpers.DefaultStreamPipe;
 import org.culturegraph.mf.sql.sink.SqlStreamSink;
 import org.culturegraph.mf.sql.util.JdbcUtil;
 import org.culturegraph.mf.sql.util.PreparedQuery;
-import org.culturegraph.mf.sql.util.QueryBase;
 
 /**
  * Executes a prepared query for each record received. Each row of the result
@@ -47,7 +46,7 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 
 	private final Connection connection;
 
-	private String idColumnLabel = QueryBase.DEFAULT_ID_COLUMN;
+	private String idColumnLabel = PreparedQuery.DEFAULT_ID_COLUMN;
 	private String sql;
 
 	private PreparedQuery query;
