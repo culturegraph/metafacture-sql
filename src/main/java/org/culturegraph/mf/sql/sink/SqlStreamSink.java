@@ -26,24 +26,20 @@ import org.culturegraph.mf.sql.util.JdbcUtil;
 import org.culturegraph.mf.sql.util.PreparedQuery;
 
 /**
- * Executes a prepared query for each record received. The
- * prepared query supports named parameters (written as
- * :PARAMETER). If a literal name matches a parameter name
- * its value is used for the parameter. Literals in entities
+ * Executes a prepared query for each record received. The prepared query
+ * supports named parameters (written as :PARAMETER). If a literal name matches
+ * a parameter name its value is used for the parameter. Literals in entities
  * are not prefixed with entity name.
- *
- * {@code SqlStreamSinkTest} does not evaluate the result set
- * which may be returned by executing the query. This
- * makes this module suitable for performing operations such
- * as INSERT, UPDATE or DELETE.
- *
- * Use {@code SqlStreamPipe} if access to the results of the
- * SQL query is required.
- *
- * @see SqlStreamPipe
+ * <p>
+ * This module does not evaluate the result set which may be returned by
+ * executing the query. This makes this module suitable for performing
+ * operations such as INSERT, UPDATE or DELETE.
+ * <p>
+ * Use {@link SqlStreamPipe} if access to the results of the SQL query is
+ * required.
  *
  * @author Christoph Böhme
- *
+ * @see SqlStreamPipe
  */
 @Description("Executes a prepared query for each record received.")
 @In(StreamReceiver.class)
@@ -55,8 +51,8 @@ public final class SqlStreamSink extends DefaultStreamReceiver {
 
 	private PreparedQuery query;
 
-	public SqlStreamSink(final String datasource) {
-		this.connection = JdbcUtil.getConnection(datasource);
+	public SqlStreamSink(final String dataSource) {
+		this.connection = JdbcUtil.getConnection(dataSource);
 	}
 
 	public SqlStreamSink(final Connection connection) {

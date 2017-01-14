@@ -25,21 +25,17 @@ import org.culturegraph.mf.sql.util.DirectQuery;
 import org.culturegraph.mf.sql.util.JdbcUtil;
 
 /**
- * Executes the received string object as an SQL statement. Any
- * result sets which may be produced by executing the statement
- * are discarded.
- *
- * Use {@code SqlStatementPipe} if access to the result sets is
- * required.
- *
- * In many situations it can be preferable to use prepared
- * statements instead of raw SQL statements. Use {@SqlStreamSink}
- * in such situations.
- *
- * @see SqlStatementPipe
- * @see SqlStreamSink
+ * Executes the received string object as an SQL statement. Any result sets
+ * which may be produced by executing the statement are discarded.
+ * <p>
+ * Use {@link SqlStatementPipe} if access to the result sets is required.
+ * <p>
+ * In many situations it can be preferable to use prepared statements instead of
+ * raw SQL statements. Use {@link SqlStreamSink} in such situations.
  *
  * @author Christoph Böhme
+ * @see SqlStatementPipe
+ * @see SqlStreamSink
  */
 @Description("Executes the received string object as an SQL statement.")
 @In(String.class)
@@ -49,8 +45,8 @@ public final class SqlStatementSink extends DefaultObjectReceiver<String> {
 
 	private final DirectQuery query;
 
-	public SqlStatementSink(final String datasource) {
-		this(JdbcUtil.getConnection(datasource));
+	public SqlStatementSink(final String dataSource) {
+		this(JdbcUtil.getConnection(dataSource));
 	}
 
 	public SqlStatementSink(final Connection connection) {

@@ -20,7 +20,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.EnumSet;
+import java.util.Set;
 
 import org.culturegraph.mf.framework.MetafactureException;
 import org.culturegraph.mf.framework.StreamReceiver;
@@ -30,7 +30,6 @@ import org.culturegraph.mf.sql.util.JdbcUtil.Bug;
  * Base class for prepared statements and individual statements.
  *
  * @author Christoph Böhme
- *
  */
 public class QueryBase {
 
@@ -38,7 +37,7 @@ public class QueryBase {
 
 	private final String idColumnLabel;
 	private final boolean emitGeneratedKeys;
-	private final EnumSet<Bug> driverBugs;
+	private final Set<Bug> driverBugs;
 
 	public QueryBase(final Connection connection, final String idColumnLabel,
 			final boolean emitGeneratedKeys) {

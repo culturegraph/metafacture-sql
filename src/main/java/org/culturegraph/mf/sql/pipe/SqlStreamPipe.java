@@ -28,17 +28,15 @@ import org.culturegraph.mf.sql.util.PreparedQuery;
 import org.culturegraph.mf.sql.util.QueryBase;
 
 /**
- * Executes a prepared query for each record received. Each
- * row of the result sets produced by the query is emitted
- * as a new record. The module also emits generated keys as new
- * records.
+ * Executes a prepared query for each record received. Each row of the result
+ * sets produced by the query is emitted as a new record. The module also emits
+ * generated keys as new records.
+ * <p>
+ * Use {@link SqlStreamSink} for SQL statements which do not produce any result
+ * sets.
  *
- * Use {@code SqlStreamSink} for SQL statements which do not
- * produce any result sets.
- *
- * @see SqlStreamSink
-
  * @author Christoph Böhme
+ * @see SqlStreamSink
  */
 @Description("Executes a prepared query for each record received.")
 @In(StreamReceiver.class)
@@ -54,8 +52,8 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 
 	private PreparedQuery query;
 
-	public SqlStreamPipe(final String datasource) {
-		this.connection = JdbcUtil.getConnection(datasource);
+	public SqlStreamPipe(final String dataSource) {
+		this.connection = JdbcUtil.getConnection(dataSource);
 	}
 
 	public SqlStreamPipe(final Connection connection) {
@@ -73,9 +71,8 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 	@Override
 	public void startRecord(final String id) {
 		if (query == null) {
-			this.query = new PreparedQuery(connection, sql, idColumnLabel, true);
+			query = new PreparedQuery(connection, sql, idColumnLabel, true);
 		}
-
 		query.clearParameters();
 		query.setParameter(ID_PARAMETER, id);
 	}
@@ -83,14 +80,12 @@ public final class SqlStreamPipe extends DefaultStreamPipe<StreamReceiver> {
 	@Override
 	public void endRecord() {
 		assert query != null: "startRecord was not called";
-
 		query.execute(getReceiver());
 	}
 
 	@Override
 	public void literal(final String name, final String value) {
 		assert query != null: "startRecord was not called";
-
 		query.setParameter(name, value);
 	}
 

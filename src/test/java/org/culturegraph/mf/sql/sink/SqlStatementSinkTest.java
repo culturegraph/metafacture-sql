@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for {@link SQLStatementSink}.
+ * Tests for {@link SqlStatementSink}.
  *
  * @author Christoph Böhme
  *

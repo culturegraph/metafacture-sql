@@ -53,7 +53,7 @@ public final class Database {
 	 * responsible for closing the connection.
 	 *
 	 * @return a new connection to the database
-	 * @throws SQLException
+	 * @throws SQLException if an error occurs while getting the connection.
 	 */
 	public Connection getClosableConnection() throws SQLException {
 		return DriverManager.getConnection(url);
@@ -61,13 +61,12 @@ public final class Database {
 
 	/**
 	 * Returns the default connection for the database. The caller
-	 * must not close this connection. Use {@link getCloseableConnection}
+	 * must not close this connection. Use {@link #getClosableConnection()}
 	 * if you need a connection which can be closed.
 	 *
 	 * @return a connection to the database.
-	 * @throws SQLException
 	 */
-	public Connection getConnection() throws SQLException {
+	public Connection getConnection() {
 		return connection;
 	}
 

@@ -27,11 +27,10 @@ import org.culturegraph.mf.sql.util.PreparedQuery;
 import org.culturegraph.mf.sql.util.QueryBase;
 
 /**
- * Executes a prepared statement or stored procedure for each
- * object received. The string value of the object is passed
- * into the SQL statement as a parameter named ":obj". The
- * result sets created by executing the statement are returned
- * as records. For each row in the result set one record is
+ * Executes a prepared statement or stored procedure for each object received.
+ * The string value of the object is passed into the SQL statement as a
+ * parameter named ":obj". The result sets created by executing the statement
+ * are returned as records. For each row in the result set one record is
  * emitted.
  *
  * @author Christoph Böhme
@@ -51,8 +50,8 @@ public final class SqlStreamSource<T> extends
 
 	private PreparedQuery statement;
 
-	public SqlStreamSource(final String datasource) {
-		this.connection = JdbcUtil.getConnection(datasource);
+	public SqlStreamSource(final String dataSource) {
+		this.connection = JdbcUtil.getConnection(dataSource);
 	}
 
 	public SqlStreamSource(final Connection connection) {
@@ -72,7 +71,6 @@ public final class SqlStreamSource<T> extends
 		if (statement == null) {
 			statement = new PreparedQuery(connection, sql, idColumnLabel, true);
 		}
-
 		statement.clearParameters();
 		statement.setParameter("obj", obj.toString());
 		statement.execute(getReceiver());

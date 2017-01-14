@@ -28,22 +28,19 @@ import org.culturegraph.mf.sql.util.JdbcUtil;
 import org.culturegraph.mf.sql.util.QueryBase;
 
 /**
- * Executes the received string object as an SQL statement.
- * Each row of the result sets produced by the statement is
- * emitted as a new record. The module also emits generated
- * keys as new records.
- *
- * Use {@code SqlStatementPipe} for SQL statements which do not
- * produce any result sets.
- *
- * In many situations it can be preferable to use prepared
- * statements instead of hand-crafted SQL. Use {@SqlStreamPipe}
- * in such situations.
- *
- * @see SqlStatementSink
- * @see SqlStreamPipe
+ * Executes the received string object as an SQL statement. Each row of the
+ * result sets produced by the statement is emitted as a new record. The module
+ * also emits generated keys as new records.
+ * <p>
+ * Use {@code SqlStatementPipe} for SQL statements which do not produce any
+ * result sets.
+ * <p>
+ * In many situations it can be preferable to use prepared statements instead of
+ * hand-crafted SQL. Use {@link SqlStreamPipe} in such situations.
  *
  * @author Christoph Böhme
+ * @see SqlStatementSink
+ * @see SqlStreamPipe
  */
 @Description("Executes the received string object as an SQL statement.")
 @In(String.class)
@@ -56,8 +53,8 @@ public final class SqlStatementPipe extends
 	private String idColumnLabel = QueryBase.DEFAULT_ID_COLUMN;
 	private DirectQuery query;
 
-	public SqlStatementPipe(final String datasource) {
-		this(JdbcUtil.getConnection(datasource));
+	public SqlStatementPipe(final String dataSource) {
+		this(JdbcUtil.getConnection(dataSource));
 	}
 
 	public SqlStatementPipe(final Connection connection) {
@@ -73,7 +70,6 @@ public final class SqlStatementPipe extends
 		if (query == null) {
 			query = new DirectQuery(connection, idColumnLabel, true);
 		}
-
 		query.execute(sql, getReceiver());
 	}
 
