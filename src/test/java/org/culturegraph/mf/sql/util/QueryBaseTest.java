@@ -16,10 +16,10 @@
 package org.culturegraph.mf.sql.util;
 
 import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -77,7 +77,8 @@ public final class QueryBaseTest extends DatabaseBasedTest {
 
 		final InOrder ordered = inOrder(receiver);
 		ordered.verify(receiver).startRecord("");
-		ordered.verify(receiver).literal(argThat(equalToIgnoringCase("key")), eq("1"));
+		ordered.verify(receiver).literal(
+				argThat(equalToIgnoringCase("key")), eq("1"));
 		ordered.verify(receiver).endRecord();
 		verifyNoMoreInteractions(receiver);
 	}

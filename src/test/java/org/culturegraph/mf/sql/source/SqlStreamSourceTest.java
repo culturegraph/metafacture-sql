@@ -1,19 +1,21 @@
 package org.culturegraph.mf.sql.source;
 
-import static org.junit.Assert.fail;
+import static org.mockito.Mockito.inOrder;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.apache.commons.dbutils.DbUtils;
-import org.culturegraph.mf.exceptions.FormatException;
+import org.culturegraph.mf.framework.StreamReceiver;
 import org.culturegraph.mf.sql.util.DatabaseBasedTest;
-import org.culturegraph.mf.stream.sink.EventList;
-import org.culturegraph.mf.stream.sink.StreamValidator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 /**
  * Tests for {@link SqlStreamSource}.
@@ -42,6 +44,12 @@ public final class SqlStreamSourceTest extends DatabaseBasedTest {
 	private static final String SELECT_ALL =
 			"SELECT key, name FROM Test WHERE key = :obj";
 
+	@Rule
+	public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+	@Mock
+	private StreamReceiver receiver;
+
 	Connection connection;
 
 	@Before
@@ -59,62 +67,44 @@ public final class SqlStreamSourceTest extends DatabaseBasedTest {
 	}
 
 	@Test
-	@Ignore  // H2 does return generated keys out of nowhere
-	         //  if used with two connections. Until we find
-	         // a fix for this, this test is ignored.
-	public void testSqlStreamSource() throws SQLException {
-		final EventList expected = new EventList();
-		expected.startRecord("");
-		expected.literal(COLUMN2, NAME2);
-		expected.endRecord();
-		expected.startRecord("");
-		expected.literal(COLUMN2, NAME1);
-		expected.endRecord();
-		expected.startRecord("");
-		expected.literal(COLUMN2, NAME2);
-		expected.endRecord();
-		expected.closeStream();
-
-		final SqlStreamSource<String> source = new SqlStreamSource<String>(connection);
+	public void shouldQueryAndReturnRecords() throws SQLException {
+		final SqlStreamSource<String> source = new SqlStreamSource<>(connection);
 		source.setStatement(SELECT);
 		source.setIdColumnLabel(COLUMN1);
-		final StreamValidator validator = new StreamValidator(expected.getEvents());
-		source.setReceiver(validator);
+		source.setReceiver(receiver);
 
-		try {
-			source.process(KEY2);
-			source.process(KEY1);
-			source.process(KEY2);
-			source.closeStream();
-		} catch (final FormatException e) {
-			fail(e.toString());
-		}
+		source.process(KEY2);
+		source.process(KEY1);
+		source.process(KEY2);
+		source.closeStream();
+
+		final InOrder ordered = inOrder(receiver);
+		ordered.verify(receiver).startRecord("");
+		ordered.verify(receiver).literal(COLUMN2, NAME2);
+		ordered.verify(receiver).endRecord();
+		ordered.verify(receiver).startRecord("");
+		ordered.verify(receiver).literal(COLUMN2, NAME1);
+		ordered.verify(receiver).endRecord();
+		ordered.verify(receiver).startRecord("");
+		ordered.verify(receiver).literal(COLUMN2, NAME2);
+		ordered.verify(receiver).endRecord();
 	}
 
 	@Test
-	@Ignore  // H2 does return generated keys out of nowhere
-	         //  if used with two connections. Until we find
-	         // a fix for this, this test is ignored.
-	public void testShouldSetIdNameToColumnLabel() throws SQLException {
-		final EventList expected = new EventList();
-		expected.startRecord(KEY2);
-		expected.literal(COLUMN1, KEY2);
-		expected.literal(COLUMN2, NAME2);
-		expected.endRecord();
-		expected.closeStream();
-
-		final SqlStreamSource<String> source = new SqlStreamSource<String>(connection);
+	public void shouldSetIdNameToColumnLabel() throws SQLException {
+		final SqlStreamSource<String> source = new SqlStreamSource<>(connection);
 		source.setStatement(SELECT_ALL);
 		source.setIdColumnLabel(COLUMN1);
-		final StreamValidator validator = new StreamValidator(expected.getEvents());
-		source.setReceiver(validator);
+		source.setReceiver(receiver);
 
-		try {
-			source.process(KEY2);
-			source.closeStream();
-		} catch (final FormatException e) {
-			fail(e.toString());
-		}
+		source.process(KEY2);
+		source.closeStream();
+
+		final InOrder ordered = inOrder(receiver);
+		ordered.verify(receiver).startRecord(KEY2);
+		ordered.verify(receiver).literal(COLUMN1, KEY2);
+		ordered.verify(receiver).literal(COLUMN2, NAME2);
+		ordered.verify(receiver).endRecord();
 	}
 
 }

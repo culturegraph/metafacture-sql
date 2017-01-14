@@ -23,7 +23,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.culturegraph.mf.exceptions.MetafactureException;
+import org.culturegraph.mf.framework.MetafactureException;
 
 /**
  * Utility functions for working with JDBC.

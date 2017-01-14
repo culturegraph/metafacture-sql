@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.culturegraph.mf.exceptions.MetafactureException;
+import org.culturegraph.mf.framework.MetafactureException;
 import org.culturegraph.mf.framework.StreamReceiver;
 import org.culturegraph.mf.sql.util.JdbcUtil.Bug;
 

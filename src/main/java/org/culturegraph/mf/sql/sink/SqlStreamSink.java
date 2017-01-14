@@ -17,10 +17,10 @@ package org.culturegraph.mf.sql.sink;
 
 import java.sql.Connection;
 
-import org.culturegraph.mf.framework.DefaultStreamReceiver;
 import org.culturegraph.mf.framework.StreamReceiver;
 import org.culturegraph.mf.framework.annotations.Description;
 import org.culturegraph.mf.framework.annotations.In;
+import org.culturegraph.mf.framework.helpers.DefaultStreamReceiver;
 import org.culturegraph.mf.sql.pipe.SqlStreamPipe;
 import org.culturegraph.mf.sql.util.JdbcUtil;
 import org.culturegraph.mf.sql.util.PreparedQuery;
