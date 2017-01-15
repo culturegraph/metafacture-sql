@@ -13,27 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.culturegraph.mf.sql.sink;
+package org.culturegraph.mf.sql;
 
 import static org.junit.Assert.assertEquals;
 
 import java.sql.SQLException;
 
+import org.culturegraph.mf.sql.SqlStreamSink;
 import org.culturegraph.mf.sql.util.DataSet;
 import org.culturegraph.mf.sql.util.DatabaseBasedTest;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for {@link SqlStatementSink}.
+ * Test {@link SqlStreamSink}
  *
  * @author Christoph Böhme
  *
  */
-public final class SqlStatementSinkTest extends DatabaseBasedTest {
+public final class SqlStreamSinkTest extends DatabaseBasedTest {
 
 	private static final String COLUMN1 = "key";
 	private static final String COLUMN2 = "name";
+	private static final String IGNORED_LITERAL = "ignore";
+	private static final String IGNORED_VALUE = "me";
 	private static final String KEY1 = "101";
 	private static final String KEY2 = "102";
 	private static final String NAME1 = "al-Chwarizmi";
@@ -43,7 +46,7 @@ public final class SqlStatementSinkTest extends DatabaseBasedTest {
 			"CREATE TABLE Test (key VARCHAR(10), name VARCHAR(50))";
 
 	private static final String INSERT =
-			"INSERT INTO Test (key, name) VALUES ('%s', '%s')";
+			"INSERT INTO Test (key, name) VALUES (:_ID, :name)";
 
 	private static final String SELECT =
 			"SELECT * FROM Test";
@@ -55,10 +58,18 @@ public final class SqlStatementSinkTest extends DatabaseBasedTest {
 	}
 
 	@Test
-	public void testSqlStatementSink() throws SQLException {
-		final SqlStatementSink sink = new SqlStatementSink(getDatabase().getClosableConnection());
-		sink.process(String.format(INSERT, KEY1, NAME1));
-		sink.process(String.format(INSERT, KEY2, NAME2));
+	public void testSqlStreamSink() throws SQLException {
+		final SqlStreamSink sink = new SqlStreamSink(getDatabase().getClosableConnection());
+		sink.setQuery(INSERT);
+
+		sink.startRecord(KEY1);
+		sink.literal(COLUMN2, NAME1);
+		sink.literal(IGNORED_LITERAL, IGNORED_VALUE);
+		sink.endRecord();
+		sink.startRecord(KEY2);
+		sink.literal(COLUMN2, NAME2);
+		sink.literal(IGNORED_LITERAL, IGNORED_VALUE);
+		sink.endRecord();
 		sink.closeStream();
 
 		final DataSet actual = new DataSet(getDatabase(), SELECT);

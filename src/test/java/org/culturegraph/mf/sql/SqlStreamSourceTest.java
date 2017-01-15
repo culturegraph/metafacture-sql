@@ -1,4 +1,4 @@
-package org.culturegraph.mf.sql.source;
+package org.culturegraph.mf.sql;
 
 import static org.mockito.Mockito.inOrder;
 
@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.culturegraph.mf.framework.StreamReceiver;
+import org.culturegraph.mf.sql.SqlStreamSource;
 import org.culturegraph.mf.sql.util.DatabaseBasedTest;
 import org.junit.After;
 import org.junit.Before;

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.culturegraph.mf.sql.pipe;
+package org.culturegraph.mf.sql;
 
 import java.sql.Connection;
 
@@ -22,7 +22,6 @@ import org.culturegraph.mf.framework.annotations.Description;
 import org.culturegraph.mf.framework.annotations.In;
 import org.culturegraph.mf.framework.annotations.Out;
 import org.culturegraph.mf.framework.helpers.DefaultObjectPipe;
-import org.culturegraph.mf.sql.sink.SqlStatementSink;
 import org.culturegraph.mf.sql.util.DirectQuery;
 import org.culturegraph.mf.sql.util.JdbcUtil;
 
